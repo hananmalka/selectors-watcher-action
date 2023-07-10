@@ -20191,7 +20191,7 @@ const executeShellCommand = async (command) => {
 };
 
 const getAttributeChanges = async () => {
-  core.info("Get attribute changes");
+  core.info(`Get attribute changes: ${attributes}`);
   let greppedValue = ""
   attributes.forEach((selector, index) => {
     greppedValue += selector + "=" + (index === attributes.length - 1 ? "" : "|");
