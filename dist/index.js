@@ -20181,7 +20181,7 @@ const slackChannel = core.getInput('slack_channel');
 const reviewers = core.getInput('reviewers');
 const attributes = core.getInput('attributes');
 const slackToken = core.getInput("slack_token");
-const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+const octokit = github.getOctokit(core.getInput("token"));
 const owner = context.repo.owner;
 const repo = context.repo;
 
