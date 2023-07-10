@@ -20193,7 +20193,12 @@ const executeShellCommand = async (command) => {
 const getAttributeChanges = async () => {
   core.info(`Get attribute changes: ${attributes}`);
   let greppedValue = ""
-  attributes.forEach((selector, index) => {
+  const attributesArray = JSON.parse(attributes);
+  if (!Array.isArray(attributesArray)) {
+    throw new Error('The "attributes" input parameter must be an array.');
+  }
+
+  attributesArray.forEach((selector, index) => {
     greppedValue += selector + "=" + (index === attributes.length - 1 ? "" : "|");
   })
   const changedLines = await executeShellCommand(
