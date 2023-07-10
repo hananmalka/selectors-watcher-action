@@ -1,6 +1,10 @@
 name: 'selectors-watcher-action'
 description: 'Detect git changes in provided attributes and send notifications to relevant stakeholders'
 inputs:
+  token: #
+    description: ""
+    required: true
+    default: ""
   slack_channel:  # slack channel ID
     description: 'Slack channel ID to get messages'
     required: true
