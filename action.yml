@@ -1,13 +1,22 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'selectors-watcher-action'
+description: 'Detect git changes in provided attributes and send notifications to relevant stakeholders'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  slack_channel:  # slack channel ID
+    description: 'Slack channel ID to get messages'
     required: true
-    default: '1000'
-outputs:
-  time: # output will be available to future steps
-    description: 'The current time after waiting'
+    default: ''
+  slack_token:  # Slack token
+    description: 'Slack token'
+    required: true
+    default: ''
+  reviewers: # reviewers names
+    description: 'github login user of reviewers you want to add'
+    required: false
+    default: []
+  attributes: # attributes to detect
+    description: 'Attribute that we want to detect changes'
+    required: false
+    default: ['id']
 runs:
   using: 'node16'
   main: 'dist/index.js'
