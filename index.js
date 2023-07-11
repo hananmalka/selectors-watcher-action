@@ -102,7 +102,7 @@ const addReviewersToPullRequest = async (pullRequest) => {
     owner: owner,
     repo: repo,
     pull_number: pull_number,
-    reviewers: `[${missingReviewers}]`
+    reviewers: `["${missingReviewers}"]`
   }
   core.info(`About to add the following reviewers: ${missingReviewers} to pull request: ${pull_number}`);
   const response = await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
