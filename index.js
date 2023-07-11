@@ -1,5 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const { Octokit } = require("@octokit/rest");
+
 
 const diff = require("diff");
 const axios = require("axios");
@@ -16,7 +18,10 @@ const slackChannel = core.getInput('slack_channel');
 const reviewers = core.getInput('reviewers');
 const attributes = core.getInput('attributes');
 const slackToken = core.getInput("slack_token");
-const octokit = github.getOctokit(core.getInput("token"));
+
+const github_token = core.getInput("token");
+const octokit = new Octokit({ auth: `${github_token}`});
+
 const owner = context.repo.owner;
 const repo = context.repo;
 
