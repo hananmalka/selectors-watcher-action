@@ -20189,7 +20189,7 @@ const repo = context.repo;
 // const repoPath = path.resolve(workspacePath);
 
 const executeShellCommand = async () => {
-  const {stdout} = execSync(`git diff`, {encoding: 'utf-8'});
+  const {stdout} = execSync(`git diff HEAD^`, {encoding: 'utf-8'});
   return stdout;
 };
 
