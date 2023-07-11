@@ -20167,7 +20167,8 @@ const github = __nccwpck_require__(5438);
 
 const diff = __nccwpck_require__(1672);
 const axios = __nccwpck_require__(8757);
-const {execSync} = __nccwpck_require__(8493);
+const util = __nccwpck_require__(3837);
+const exec = util.promisify((__nccwpck_require__(8493).exec));
 // const path = require("path");
 
 
@@ -20189,7 +20190,7 @@ const repo = context.repo;
 // const repoPath = path.resolve(workspacePath);
 
 const executeShellCommand = async () => {
-  const {stdout} = execSync(`git diff HEAD^`, {encoding: 'utf-8'});
+  const {stdout} = await exec(`git diff HEAD^`);
   return stdout;
 };
 
