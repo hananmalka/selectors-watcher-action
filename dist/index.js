@@ -25600,12 +25600,12 @@ const addReviewersToPullRequest = async (pullRequest) => {
   if (!Array.isArray(reviewersArray)) {
     throw new Error('The "reviewers" input parameter must be an array.');
   }
-  const missingReviewers = reviewersArray.filter(value => !prCurrentReviewers.includes(value));
+  const missingReviewers = reviewersArray.filter(reviewer => !prCurrentReviewers.includes(reviewer));
   const githubHeaders = {
     owner: owner,
     repo: repo,
     pull_number: pull_number,
-    reviewers: missingReviewers
+    reviewers: `[${missingReviewers}]`
   }
   core.info(`About to add the following reviewers: ${missingReviewers} to pull request: ${pull_number}`);
   const response = await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
@@ -25647,6 +25647,16 @@ async function run() {
       const arrayOfChangedSelectors = getOldNewAChangesArray(attributeChanges);
       if (arrayOfChangedSelectors.length !== 0) {
         notificationMessage = await generateNotificationMessage(arrayOfChangedSelectors);
+        // await core.group('Run Marketplace Step', async () => {
+        //   // Execute the marketplace step commands
+        //   await core.run('AveryCameronUofR/add-reviewer-gh-action@1.0.3', {
+        //     reviewers: 'value1',
+        //     option2: 'value2',
+        //   });
+        // });
+
+
+
         await addReviewersToPullRequest(pullRequest);
         notificationMessage += notificationMessage +
             `you were added as a reviewer to the PR: \n` +
