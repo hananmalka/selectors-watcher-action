@@ -37,7 +37,7 @@ const getAttributeChanges = async () => {
   }
 
   attributesArray.forEach((selector, index) => {
-    greppedValue += selector + "=" + (index === attributes.length - 1 ? "" : "|");
+    greppedValue += selector + "=" + (index === attributesArray.length - 1 ? "" : "|");
   })
   const changedLines = await executeShellCommand(
       `git diff HEAD^ --word-diff | grep -E "${greppedValue}" | grep + | awk '{$1=$1};1'`
