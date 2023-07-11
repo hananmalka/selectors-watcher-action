@@ -20168,7 +20168,7 @@ const github = __nccwpck_require__(5438);
 const diff = __nccwpck_require__(1672);
 const axios = __nccwpck_require__(8757);
 const {execSync} = __nccwpck_require__(8493);
-const path = __nccwpck_require__(1017);
+// const path = require("path");
 
 
 const context = github.context;
@@ -20185,11 +20185,11 @@ const octokit = github.getOctokit(core.getInput("token"));
 const owner = context.repo.owner;
 const repo = context.repo;
 
-const workspacePath = process.env.GITHUB_WORKSPACE;
-const repoPath = path.resolve(workspacePath);
+// const workspacePath = process.env.GITHUB_WORKSPACE;
+// const repoPath = path.resolve(workspacePath);
 
-const executeShellCommand = async (command) => {
-  const {stdout} = execSync(`${command}`, {cwd: repoPath, encoding: 'utf-8'});
+const executeShellCommand = async () => {
+  const {stdout} = execSync(`git diff`, {encoding: 'utf-8'});
   return stdout;
 };
 

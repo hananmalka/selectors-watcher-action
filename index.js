@@ -4,7 +4,7 @@ const github = require('@actions/github');
 const diff = require("diff");
 const axios = require("axios");
 const {execSync} = require("child_process");
-const path = require("path");
+// const path = require("path");
 
 
 const context = github.context;
@@ -21,11 +21,11 @@ const octokit = github.getOctokit(core.getInput("token"));
 const owner = context.repo.owner;
 const repo = context.repo;
 
-const workspacePath = process.env.GITHUB_WORKSPACE;
-const repoPath = path.resolve(workspacePath);
+// const workspacePath = process.env.GITHUB_WORKSPACE;
+// const repoPath = path.resolve(workspacePath);
 
-const executeShellCommand = async (command) => {
-  const {stdout} = execSync(`${command}`, {cwd: repoPath, encoding: 'utf-8'});
+const executeShellCommand = async () => {
+  const {stdout} = execSync(`git diff`, {encoding: 'utf-8'});
   return stdout;
 };
 
