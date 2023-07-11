@@ -20167,8 +20167,8 @@ const github = __nccwpck_require__(5438);
 
 const diff = __nccwpck_require__(1672);
 const axios = __nccwpck_require__(8757);
-const util = __nccwpck_require__(3837);
-const exec = util.promisify((__nccwpck_require__(8493).exec));
+const {execSync} = __nccwpck_require__(8493);
+const path = __nccwpck_require__(1017);
 
 
 const context = github.context;
@@ -20185,8 +20185,11 @@ const octokit = github.getOctokit(core.getInput("token"));
 const owner = context.repo.owner;
 const repo = context.repo;
 
+const workspacePath = process.env.GITHUB_WORKSPACE;
+const repoPath = path.resolve(workspacePath);
+
 const executeShellCommand = async (command) => {
-  const {stdout} = await exec(`${command}`);
+  const {stdout} = execSync(`${command}`, {cwd: repoPath, encoding: 'utf-8'});
   return stdout;
 };
 
