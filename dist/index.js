@@ -20169,8 +20169,6 @@ const diff = __nccwpck_require__(1672);
 const axios = __nccwpck_require__(8757);
 const util = __nccwpck_require__(3837);
 const exec = util.promisify((__nccwpck_require__(8493).exec));
-// const path = require("path");
-
 
 const context = github.context;
 const pullRequest = context.payload.pull_request;
@@ -20253,7 +20251,6 @@ const generateNotificationMessage = async(arrayOfChangedSelectors) => {
 }
 
 const addReviewersToPullRequest = async (pullRequest) => {
-  core.info("Add rev")
   const prCurrentReviewers = pullRequest.requested_reviewers;
   const reviewersArray = JSON.parse(reviewers);
   if (!Array.isArray(reviewersArray)) {
@@ -20266,7 +20263,7 @@ const addReviewersToPullRequest = async (pullRequest) => {
     pull_number: pull_number,
     reviewers: missingReviewers
   }
-  core.info(`About to add the following reviewers: ${reviewersArray}`)
+  core.info(`About to add the following reviewers: ${missingReviewers} to pull request: ${pull_number}`);
   const response = await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
   return response.data;
 };

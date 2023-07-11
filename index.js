@@ -5,8 +5,6 @@ const diff = require("diff");
 const axios = require("axios");
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
-// const path = require("path");
-
 
 const context = github.context;
 const pullRequest = context.payload.pull_request;
@@ -89,7 +87,6 @@ const generateNotificationMessage = async(arrayOfChangedSelectors) => {
 }
 
 const addReviewersToPullRequest = async (pullRequest) => {
-  core.info("Add rev")
   const prCurrentReviewers = pullRequest.requested_reviewers;
   const reviewersArray = JSON.parse(reviewers);
   if (!Array.isArray(reviewersArray)) {
@@ -102,7 +99,7 @@ const addReviewersToPullRequest = async (pullRequest) => {
     pull_number: pull_number,
     reviewers: missingReviewers
   }
-  core.info(`About to add the following reviewers: ${reviewersArray}`)
+  core.info(`About to add the following reviewers: ${missingReviewers} to pull request: ${pull_number}`);
   const response = await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
   return response.data;
 };
