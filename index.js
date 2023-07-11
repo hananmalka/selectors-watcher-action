@@ -23,7 +23,7 @@ const owner = context.repo.owner;
 const repo = context.repo;
 
 const executeShellCommand = async (command) => {
-  core.info(`About to execute command: ${command}`);
+  core.info(`Execute command: ${command}`);
   const {stdout} = await exec(`${command}`);
   return stdout;
 };
@@ -47,6 +47,7 @@ const getAttributeChanges = async () => {
 };
 
 const getOldNewAChangesArray = (gitChanges) => {
+  core.info("Generate Old/New selectors object")
   const changesObjectArray = [];
   const attributesArray = JSON.parse(attributes);
   if (!Array.isArray(attributesArray)) {
@@ -88,6 +89,7 @@ const generateNotificationMessage = async(arrayOfChangedSelectors) => {
 }
 
 const addReviewersToPullRequest = async (pullRequest) => {
+  core.info("Add rev")
   const prCurrentReviewers = pullRequest.requested_reviewers;
   const reviewersArray = JSON.parse(reviewers);
   if (!Array.isArray(reviewersArray)) {
@@ -95,12 +97,12 @@ const addReviewersToPullRequest = async (pullRequest) => {
   }
   const missingReviewers = reviewersArray.filter(value => !prCurrentReviewers.includes(value));
   const githubHeaders = {
-    owner,
-    repo,
-    pull_number,
+    owner: owner,
+    repo: repo,
+    pull_number: pull_number,
     reviewers: missingReviewers
   }
-
+  core.info(`About to add the following reviewers: ${reviewersArray}`)
   const response = await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
   return response.data;
 };
