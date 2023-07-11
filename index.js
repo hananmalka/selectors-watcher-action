@@ -22,10 +22,8 @@ const octokit = github.getOctokit(core.getInput("token"));
 const owner = context.repo.owner;
 const repo = context.repo;
 
-// const workspacePath = process.env.GITHUB_WORKSPACE;
-// const repoPath = path.resolve(workspacePath);
-
 const executeShellCommand = async (command) => {
+  core.info(`About to execute command: ${command}`);
   const {stdout} = await exec(`${command}`);
   return stdout;
 };
@@ -91,7 +89,11 @@ const generateNotificationMessage = async(arrayOfChangedSelectors) => {
 
 const addReviewersToPullRequest = async (pullRequest) => {
   const prCurrentReviewers = pullRequest.requested_reviewers;
-  const missingReviewers = reviewers.filter(value => !prCurrentReviewers.includes(value));
+  const reviewersArray = JSON.parse(reviewers);
+  if (!Array.isArray(reviewersArray)) {
+    throw new Error('The "reviewers" input parameter must be an array.');
+  }
+  const missingReviewers = reviewersArray.filter(value => !prCurrentReviewers.includes(value));
   const githubHeaders = {
     owner,
     repo,
