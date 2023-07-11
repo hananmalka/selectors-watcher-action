@@ -20189,8 +20189,8 @@ const repo = context.repo;
 // const workspacePath = process.env.GITHUB_WORKSPACE;
 // const repoPath = path.resolve(workspacePath);
 
-const executeShellCommand = async () => {
-  const {stdout} = await exec(`git diff HEAD^`);
+const executeShellCommand = async (command) => {
+  const {stdout} = await exec(`${command}`);
   return stdout;
 };
 
@@ -20214,7 +20214,11 @@ const getAttributeChanges = async () => {
 
 const getOldNewAChangesArray = (gitChanges) => {
   const changesObjectArray = [];
-  const selectorNames = attributes.join("|");
+  const attributesArray = JSON.parse(attributes);
+  if (!Array.isArray(attributesArray)) {
+    throw new Error('The "attributes" input parameter must be an array.');
+  }
+  const selectorNames = attributesArray.join("|");
   let match;
   const regexPattern = new RegExp(`\\[-(.*?${selectorNames}.*?)-\\]\\{\\+(.*?${selectorNames}.*?)\\+\\}`, 'g');
   for (let i = 0; i < gitChanges.length - 1; i += 1) {
