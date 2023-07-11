@@ -20,7 +20,7 @@ inputs:
   attributes: # attributes to detect
     description: 'Attribute that we want to detect changes'
     required: false
-    default: '["id"]'
+    default: '[id]'
 runs:
   using: 'node16'
   main: 'dist/index.js'
