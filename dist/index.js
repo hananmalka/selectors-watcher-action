@@ -20164,7 +20164,6 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(2186);
 const github = __nccwpck_require__(5438);
-// const { Octokit } = require("@octokit/rest");
 
 
 const diff = __nccwpck_require__(1672);
@@ -20183,8 +20182,8 @@ const reviewers = core.getInput('reviewers');
 const attributes = core.getInput('attributes');
 const slackToken = core.getInput("slack_token");
 
-// const github_token = core.getInput("token");
-// const octokit = new Octokit({ auth: `${github_token}`});
+const github_token = core.getInput("token");
+const octokit = new github.getOctokit(github_token);
 
 const owner = context.repo.owner;
 const repo = context.repo;
@@ -20255,24 +20254,24 @@ const generateNotificationMessage = async(arrayOfChangedSelectors) => {
       "*Service*: " + repo + "\n";
 }
 
-// const addReviewersToPullRequest = async () => {
-//   const prCurrentReviewers = pullRequest.requested_reviewers;
-//   const reviewersArray = JSON.parse(reviewers);
-//   if (!Array.isArray(reviewersArray)) {
-//     throw new Error('The "reviewers" input parameter must be an array.');
-//   }
-//   const missingReviewers = reviewersArray.filter(reviewer => !prCurrentReviewers.includes(reviewer));
-//   const githubHeaders = {
-//     owner: owner,
-//     repo: repo,
-//     pull_number: pull_number,
-//     reviewers: `["${missingReviewers}"]`
-//   }
-//   core.info(`About to add the following reviewers: ${missingReviewers} to pull request: ${pull_number}`);
-//   const response = await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
-//   core.info(`response: ${response.data}`);
-//   return response.data;
-// };
+const addReviewersToPullRequest = async () => {
+  const prCurrentReviewers = pullRequest.requested_reviewers;
+  const reviewersArray = JSON.parse(reviewers);
+  if (!Array.isArray(reviewersArray)) {
+    throw new Error('The "reviewers" input parameter must be an array.');
+  }
+  const missingReviewers = reviewersArray.filter(reviewer => !prCurrentReviewers.includes(reviewer));
+  const githubHeaders = {
+    owner: owner,
+    repo: repo,
+    pull_number: pull_number,
+    reviewers: `["${missingReviewers}"]`
+  }
+  core.info(`About to add the following reviewers: ${missingReviewers} to pull request: ${pull_number}`);
+  const response = await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
+  core.info(`response: ${response.data}`);
+  return response.data;
+};
 
 const getDiffBetweenStrings = (oldValue, newValue) => {
   const difference = {};
@@ -20308,24 +20307,7 @@ async function run() {
       const arrayOfChangedSelectors = getOldNewAChangesArray(attributeChanges);
       if (arrayOfChangedSelectors.length !== 0) {
         notificationMessage = await generateNotificationMessage(arrayOfChangedSelectors);
-
-        const prCurrentReviewers = pullRequest.requested_reviewers;
-        const reviewersArray = JSON.parse(reviewers);
-        if (!Array.isArray(reviewersArray)) {
-          throw new Error('The "reviewers" input parameter must be an array.');
-        }
-        const missingReviewers = reviewersArray.filter(reviewer => !prCurrentReviewers.includes(reviewer));
-
-        await core.group('Run Marketplace Step', async () => {
-          // Execute the marketplace step commands
-          await core.run('AveryCameronUofR/add-reviewer-gh-action@1.0.3', {
-            reviewers: missingReviewers[0],
-          });
-        });
-
-
-
-        // await addReviewersToPullRequest();
+        await addReviewersToPullRequest();
         notificationMessage += notificationMessage +
             `you were added as a reviewer to the PR: \n` +
             `https://github.com/${owner}/${repo}/pull/${pull_number}`
