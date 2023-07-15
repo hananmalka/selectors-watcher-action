@@ -1,7 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-
 const diff = require("diff");
 const axios = require("axios");
 const util = require("util");
@@ -22,7 +21,7 @@ const github_token = core.getInput("token");
 const octokit = new github.getOctokit(github_token);
 
 const owner = context.repo.owner;
-const repo = context.repo;
+const repo = context.repo.repo;
 
 const executeShellCommand = async (command) => {
   core.info(`Execute command: ${command}`);

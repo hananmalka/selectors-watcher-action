@@ -20186,7 +20186,7 @@ const github_token = core.getInput("token");
 const octokit = new github.getOctokit(github_token);
 
 const owner = context.repo.owner;
-const repo = context.repo;
+const repo = context.repo.repo;
 
 const executeShellCommand = async (command) => {
   core.info(`Execute command: ${command}`);
