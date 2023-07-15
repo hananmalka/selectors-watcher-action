@@ -20183,6 +20183,7 @@ const attributes = core.getInput('attributes');
 const slackToken = core.getInput("slack_token");
 
 const github_token = core.getInput("token");
+console.log(github_token)
 const octokit = new github.getOctokit(github_token);
 
 const owner = context.repo.owner;
