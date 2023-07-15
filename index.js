@@ -100,7 +100,7 @@ const addReviewersToPullRequest = async () => {
     owner: owner,
     repo: repo,
     pull_number: pull_number,
-    reviewers: `["${missingReviewers}"]`
+    reviewers: missingReviewers
   }
   console.log(githubHeaders)
   core.info(`About to add the following reviewers: ${missingReviewers} to pull request: ${pull_number}`);
