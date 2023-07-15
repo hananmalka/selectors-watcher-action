@@ -19,7 +19,6 @@ const attributes = core.getInput('attributes');
 const slackToken = core.getInput("slack_token");
 
 const github_token = core.getInput("token");
-console.log(github_token)
 const octokit = new github.getOctokit(github_token);
 
 const owner = context.repo.owner;
@@ -104,6 +103,7 @@ const addReviewersToPullRequest = async () => {
     pull_number: pull_number,
     reviewers: `["${missingReviewers}"]`
   }
+  console.log(githubHeaders)
   core.info(`About to add the following reviewers: ${missingReviewers} to pull request: ${pull_number}`);
   const response = await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
   core.info(`response: ${response.data}`);
