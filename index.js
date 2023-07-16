@@ -140,9 +140,8 @@ async function run() {
     if (attributeChanges) {
       const arrayOfChangedSelectors = getOldNewAChangesArray(attributeChanges);
       if (arrayOfChangedSelectors.length !== 0) {
-        notificationMessage = await generateNotificationMessage(arrayOfChangedSelectors);
         await addReviewersToPullRequest();
-        notificationMessage += notificationMessage +
+        notificationMessage = await generateNotificationMessage(arrayOfChangedSelectors) +
             `you were added as a reviewer to the PR: \n` +
             `https://github.com/${owner}/${repo}/pull/${pull_number}`
         await sendSlackMessage(notificationMessage);
