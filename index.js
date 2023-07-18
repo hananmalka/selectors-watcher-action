@@ -1,8 +1,8 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+const { WebClient } = require('@slack/web-api');
 
 const diff = require("diff");
-const axios = require("axios");
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
 
@@ -19,6 +19,7 @@ const slackToken = core.getInput("slack_token");
 
 const github_token = core.getInput("token");
 const octokit = new github.getOctokit(github_token);
+const app = new WebClient(slackToken);
 
 const owner = context.repo.owner;
 const repo = context.repo.repo;
@@ -103,8 +104,8 @@ const addReviewersToPullRequest = async () => {
     reviewers: missingReviewers
   }
   core.info(`About to add the following reviewers: ${missingReviewers} to pull request: ${pull_number}`);
-  const response = await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
-  return response.data;
+  await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
+  return missingReviewers;
 };
 
 const getDiffBetweenStrings = (oldValue, newValue) => {
@@ -121,16 +122,36 @@ const getDiffBetweenStrings = (oldValue, newValue) => {
   return difference;
 }
 
+const getGitUserEmail = async (username) => {
+  const headers = {
+    username
+  }
+  const response = await octokit.request("GET /users/{username}", headers);
+  return response.data.email;
+}
+
+const getSlackUserByEmail = async (gitUsername) => {
+  const email = await getGitUserEmail(gitUsername);
+  return await app.users.lookupByEmail({
+    email
+  });
+}
+
+const getSlackMentionsPrefix = async (reviewers) => {
+  let slackMessagePrefix = "";
+  for(const reviewer in reviewers) {
+    const gitUserEmail = await getGitUserEmail(reviewer);
+    const slackUser = await getSlackUserByEmail(gitUserEmail)
+    slackMessagePrefix = slackMessagePrefix + ` @${slackUser.user.id}`
+  }
+  return slackMessagePrefix;
+}
+
 const sendSlackMessage = async (message) => {
-  await axios.post('https://slack.com/api/chat.postMessage', {
+  await app.chat.postMessage({
     channel: slackChannel,
     text: message
-  }, {
-    headers: {
-      'Authorization': `Bearer ${slackToken}`,
-      'Content-Type': 'application/json'
-    }
-  })
+  });
 };
 
 async function run() {
@@ -140,9 +161,10 @@ async function run() {
     if (attributeChanges) {
       const arrayOfChangedSelectors = getOldNewAChangesArray(attributeChanges);
       if (arrayOfChangedSelectors.length !== 0) {
-        await addReviewersToPullRequest();
+        const reviewers = await addReviewersToPullRequest();
+        const slackMessagePrefix = await getSlackMentionsPrefix(reviewers)
         notificationMessage = await generateNotificationMessage(arrayOfChangedSelectors) +
-            `you were added as a reviewer to the PR: \n` +
+            `${slackMessagePrefix} were added as a reviewer to the PR: \n` +
             `https://github.com/${owner}/${repo}/pull/${pull_number}`
         await sendSlackMessage(notificationMessage);
       } else {

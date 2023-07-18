@@ -1,18 +1,15 @@
 # Selectors Watcher Action
 
-<p align="center">
-  <a href="https://github.com/actions/javascript-action/actions"><img alt="javscript-action status" src="https://github.com/actions/javascript-action/workflows/units-test/badge.svg"></a>
-</p>
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fhananmalka1212%2Fhit-counter&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23961212&title=hits&edge_flat=false)](https://github.com/hananmalka)
 
-Use this template to bootstrap the creation of a JavaScript action.:rocket:
+This is a GitHub action implementation of the [`selectors-watcher`](https://github.com/hananmalka/selectors-watcher) NPM package.
 
-This template includes tests, linting, a validation workflow, publishing, and versioning guidance.
+By running this action you will be able to notify relevant stakeholders with any selectors change in order to avoid instability and lack of communication between developers and automation engineers.
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
-
-## Create an action from this template
-
-Click the `Use this Template` and provide the new repo details for your action
+### Features
+* Detect code changes according to predefined selectors
+* Notify stakeholders using Slack, showing the old and the new versions of changed selectors
+* Add relevant stakeholders as a reviewers in case pull request exists
 
 ## Code in Main
 
