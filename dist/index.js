@@ -22821,14 +22821,17 @@ const getGitUserEmail = async (username) => {
     username
   }
   const response = await octokit.request("GET /users/{username}", headers);
+  core.info(`Git user email is: ${response.data.email}`)
   return response.data.email;
 }
 
 const getSlackUserByEmail = async (gitUsername) => {
   const email = await getGitUserEmail(gitUsername);
-  return await app.users.lookupByEmail({
+  const response = await app.users.lookupByEmail({
     email
   });
+  core.info(`Slack user is: ${response}`)
+  return response;
 }
 
 const getSlackMentionsPrefix = async (reviewers) => {
