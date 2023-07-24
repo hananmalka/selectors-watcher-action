@@ -22820,7 +22820,7 @@ const getSlackUsersIdsByEmail = async () => {
   const usersIdsArray = [];
   if (slackUsersEmail) {
     const usersEmailsArray = JSON.parse(slackUsersEmail);
-    for(const email in usersEmailsArray) {
+    for(const email of usersEmailsArray) {
       const response = await app.users.lookupByEmail({
         email
       });
