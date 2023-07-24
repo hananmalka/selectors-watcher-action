@@ -141,7 +141,7 @@ const getSlackMentionsPrefix = async (usersIdsArray) => {
   if (usersIdsArray.length > 0) {
     const separator = ','
     for (let i = 0; i < usersIdsArray.length; i += 1) {
-      const userMention = `@${usersIdsArray[i]}` + (i === usersIdsArray.length - 1 ? "" : separator);
+      const userMention = `<@${usersIdsArray[i]}>` + (i === usersIdsArray.length - 1 ? "" : separator);
       slackMessagePrefix += userMention;
     }
   } else {
