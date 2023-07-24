@@ -79,7 +79,7 @@ jobs:
 
 <a href="https://imgbox.com/h7G3Gtbx" target="_blank"><img src="https://images2.imgbox.com/98/6b/h7G3Gtbx_o.png" alt="image host"/></a>
 ## 🔗 Links
-[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/hananmalka)
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/hanan-malka/)
 
 
 
