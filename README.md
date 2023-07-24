@@ -1,167 +1,86 @@
+
 # Selectors Watcher Action
 
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fhananmalka1212%2Fhit-counter&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23961212&title=hits&edge_flat=false)](https://github.com/hananmalka)
+![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fhananmalka1212%2Fhit-counter&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23961212&title=hits&edge_flat=false)
+![Stars](https://img.shields.io/github/stars/hananmalka/selectors-watcher-action)
 
-Keep your automation project **stable** by 
-detecting and notifying attributes code changes.
+Keep your automation project **stable** by detecting and notifying attributes code changes.
 
----
 
-##Table Of Contents
-
----
+## Table Of Contents
 
 * [General Info](#general-info)
 * [Features](#features)
-* [Parameters](#input-paraameters)
-* [Usage](#usage)
+* [Parameters](#input-parameters)
+* [Usage](#usage)## General Info
 
----
-
-##General Info
-This is a GitHub action implementation of the [`selectors-watcher`](https://github.com/hananmalka/selectors-watcher) NPM package.
+This is a **GitHub action** implementation of the [`selectors-watcher`](https://github.com/hananmalka/selectors-watcher) NPM package.
 
 By adding this action to your workflow you will be able to notify relevant stakeholders with any attributes change in order to avoid instability and lack of communication between developers and automation engineers.
-
-### Features
+## Features
 * Detect code changes according to predefined selectors
 * Notify stakeholders using Slack, showing the old and the new versions of changed selectors
 * Add relevant stakeholders as a pull request reviewers
-
-### Input Parameters (`with`)
-`slack_channel` (required)  
-The slack channel **ID**
-```yaml
-with:
-  slack_channel: 
-```  
-`slack_token` (required)  
-The token that enables to send messages using API 
-```yaml
-with:
-  slack_token: ${{ secrets.SLACK_TOKEN }}
-```
-`reviewers` (optional)
-```yaml
-with:
-  reviewers: ["jane doe", "jhon nokes"]
-```
-
-`attributes` (optional - default is ["id"]) 
-```yaml
-with:
-  attributes: ["id", "test-id"]
-```
-`slack_users_emails` (Optional)
-```yaml
-with:
-  slack_users_emails: ["jhon.doe@gmail.com", "jhon.nokes@gmail.com"]
-```
-
-| Name    | Description                              | Required |
-|---------|:-----------------------------------------|:---------|
-| slack_channel | The slack channel ID to get notification | true     |
-| slack_token | centered                                 | true     |
-| reviewers | are neat                                 | false    |
-| attributes| are neat                                 | false    |
-| slack_users_emails | are neat                                 | false    |
+## Parameters
 
 
-Install the dependencies
 
-```bash
-npm install
-```
 
-Run the tests :heavy_check_mark:
+| Name | Type     | Description |         Required        | Default|
+| :-------- | :------- |:------------ |:------------------------- |:-----------|
+| `token` | `string` |Github token to be able to make API actions | Yes | Empty |
+| `slack_channel` | `string` | The slack channel (ID) <br />you want to send notifications | Yes - If `reviewers` param provided,<br />otherwise - No | Empty |
+| `slack_token` | `string` | Slack bot token (Set as a repo secret) | Yes | Empty |
+|`attributes` | `Array (string)` | The attributes you want to detect changes in <br />e.g. `test-id`, `qa-id`, `automation-id`| Yes | `'["id"]'` |
+|`reviewers`| `Array (string)`| Array of revierwers to be added to the pull request| No| `'[]'`
+|`slack_users_emails` | `Array (string)` | The slack users email. <br />This is for case you want to mention the reviewers in the slack message. | No | `'[]'` |
 
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-...
-```
-
-## Change action.yml
-
-The action.yml defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```
-const core = require('@actions/core');
-...
-
-async function run() {
-  try {
-      ...
-  }
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Package for distribution
-
-GitHub Actions will run the entry point from the action.yml. Packaging assembles the code into one file that can be checked in to Git, enabling fast and reliable execution and preventing the need to check in node_modules.
-
-Actions are run from GitHub repos.  Packaging the action will create a packaged action in the dist folder.
-
-Run prepare
-
-```bash
-npm run prepare
-```
-
-Since the packaged index.js is run from the dist folder.
-
-```bash
-git add dist
-```
-
-## Create a release branch
-
-Users shouldn't consume the action from master since that would be latest code and actions can break compatibility between major versions.
-
-Checkin to the v1 release branch
-
-```bash
-git checkout -b v1
-git commit -a -m "v1 release"
-```
-
-```bash
-git push origin v1
-```
-
-Note: We recommend using the `--license` option for ncc, which will create a license file for all of the production node modules used in your project.
-
-Your action is now published! :rocket:
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
 
 ## Usage
 
-You can now consume the action by referencing the v1 branch
+In order to be able to detect code changes, you need to `checkout` the repo first.  
+`selectors-watcher-action` can be used as a **workflow** or as a **step in a workflow**.  
+Since the `selectors-watcher-action` works on a pull request - the workflow trigger should be a `pull request`
 
+
+#### Example:
+```selectors-watcher-workflow.yaml```
 ```yaml
-uses: actions/javascript-action@v1
-with:
-  milliseconds: 1000
+name: Selectors Watcher
+
+on:             //The trigger should be a pull request
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  selectors:
+    runs-on: ubuntu-latest
+    name: Selectors watcher
+    steps:
+      - name: Checkout repo             //Need to checkout the repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0            //Means all commits history of the current branch
+          ref: ${ GITHUB_HEAD_REF }
+      - uses: hananmalka/selectors-watcher-action@v1
+        with:
+          token: ${{ secrets.GHP_TOKEN }}
+          slack_channel: "YOUR_SLACK_CHANNEL_ID"
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          reviewers: '["jane doe"]'
+          attributes: '["qa-id"]'
+          slack_users_emails: '["jane.doe@gmail.com"]'
 ```
 
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:
+
+## Slack message output
+
+<a href="https://imgbox.com/h7G3Gtbx" target="_blank"><img src="https://images2.imgbox.com/98/6b/h7G3Gtbx_o.png" alt="image host"/></a>
+## 🔗 Links
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/hananmalka)
+
+
+
+### If you find this action useful feel free to buy me a coffee :)
+
+<a href="https://www.buymeacoffee.com/hananmalka" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
