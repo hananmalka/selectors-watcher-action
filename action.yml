@@ -21,6 +21,10 @@ inputs:
     description: 'Attribute that we want to detect changes'
     required: false
     default: '[id]'
+  slack_users_emails: # Slack users emails in order to be able to mention in the slack channel
+    description: "Slack users emails in order to be able to mention in the slack channel"
+    required: false
+    default: '[]'
 runs:
   using: 'node16'
   main: 'dist/index.js'

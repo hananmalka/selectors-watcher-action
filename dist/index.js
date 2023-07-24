@@ -22710,6 +22710,7 @@ const slackChannel = core.getInput('slack_channel');
 const reviewers = core.getInput('reviewers');
 const attributes = core.getInput('attributes');
 const slackToken = core.getInput("slack_token");
+const slackUsersEmail = core.getInput("slack_users_emails");
 
 const github_token = core.getInput("token");
 const octokit = new github.getOctokit(github_token);
@@ -22738,12 +22739,12 @@ const getAttributeChanges = async () => {
   const changedLines = await executeShellCommand(
       `git diff HEAD^ --word-diff | grep -E "${greppedValue}" | grep + | awk '{$1=$1};1'`
   );
+  if(changedLines.split)
   core.info(`Attribute changes: \n${changedLines}`)
   return changedLines.split("\n");
 };
 
 const getOldNewAChangesArray = (gitChanges) => {
-  core.info("Generate Old/New selectors object")
   const changesObjectArray = [];
   const attributesArray = JSON.parse(attributes);
   if (!Array.isArray(attributesArray)) {
@@ -22788,7 +22789,7 @@ const addReviewersToPullRequest = async () => {
   const prCurrentReviewers = pullRequest.requested_reviewers;
   const reviewersArray = JSON.parse(reviewers);
   if (!Array.isArray(reviewersArray)) {
-    throw new Error('The "reviewers" input parameter must be an array.');
+    throw new Error('The "reviewers" input parameter must be an array');
   }
   const missingReviewers = reviewersArray.filter(reviewer => !prCurrentReviewers.includes(reviewer));
   const githubHeaders = {
@@ -22799,7 +22800,6 @@ const addReviewersToPullRequest = async () => {
   }
   core.info(`About to add the following reviewers: ${missingReviewers} to pull request: ${pull_number}`);
   await octokit.request("POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers", githubHeaders);
-  return missingReviewers;
 };
 
 const getDiffBetweenStrings = (oldValue, newValue) => {
@@ -22816,59 +22816,73 @@ const getDiffBetweenStrings = (oldValue, newValue) => {
   return difference;
 }
 
-const getGitUserEmail = async (username) => {
-  const headers = {
-    username
+const getSlackUsersIdsByEmail = async () => {
+  const usersIdsArray = [];
+  if (slackUsersEmail) {
+    const usersEmailsArray = JSON.parse(slackUsersEmail);
+    for(const email in usersEmailsArray) {
+      const response = await app.users.lookupByEmail({
+        email
+      });
+      usersIdsArray.push(response.user.id)
+    }
   }
-  const response = await octokit.request("GET /users/{username}", headers);
-  core.info(`Git user email is: ${response.data.email}`)
-  return response.data.email;
+  return usersIdsArray;
 }
 
-const getSlackUserByEmail = async (gitUsername) => {
-  const email = await getGitUserEmail(gitUsername);
-  const response = await app.users.lookupByEmail({
-    email
-  });
-  core.info(`Slack user is: ${response}`)
-  return response;
-}
-
-const getSlackMentionsPrefix = async (reviewers) => {
+const getSlackMentionsPrefix = async (usersIdsArray) => {
   let slackMessagePrefix = "";
-  for(const reviewer in reviewers) {
-    const gitUserEmail = await getGitUserEmail(reviewer);
-    const slackUser = await getSlackUserByEmail(gitUserEmail)
-    slackMessagePrefix = slackMessagePrefix + ` @${slackUser.user.id}`
+  if (usersIdsArray.length > 0) {
+    const separator = ','
+    for (let i = 0; i < usersIdsArray.length; i += 1) {
+      const userMention = `@${usersIdsArray[i]}` + (i === usersIdsArray.length - 1 ? "" : separator);
+      slackMessagePrefix += userMention;
+    }
+  } else {
+    slackMessagePrefix = `The users ${reviewers}`
   }
   return slackMessagePrefix;
 }
 
 const sendSlackMessage = async (message) => {
-  await app.chat.postMessage({
-    channel: slackChannel,
-    text: message
-  });
+  try {
+    core.info(`About to send slack notification to channel ID: ${slackChannel}`);
+    await app.chat.postMessage({
+      channel: slackChannel,
+      text: message
+    });
+    core.info("Slack message sent successfully");
+  } catch (ex) {
+    core.info("Slack message notification failed. Reason: " + ex);
+  }
 };
 
 async function run() {
   try {
+    core.info("-----Start selectors watcher-----")
     const attributeChanges = await getAttributeChanges();
     let notificationMessage = "";
     if (attributeChanges) {
       const arrayOfChangedSelectors = getOldNewAChangesArray(attributeChanges);
       if (arrayOfChangedSelectors.length !== 0) {
-        const reviewers = await addReviewersToPullRequest();
-        const slackMessagePrefix = await getSlackMentionsPrefix(reviewers)
-        notificationMessage = await generateNotificationMessage(arrayOfChangedSelectors) +
-            `${slackMessagePrefix} were added as a reviewer to the PR: \n` +
-            `https://github.com/${owner}/${repo}/pull/${pull_number}`
+        if (reviewers) {
+          await addReviewersToPullRequest();
+          const slackUsersIds = await getSlackUsersIdsByEmail(slackUsersEmail)
+          let slackMessagePrefix = await getSlackMentionsPrefix(slackUsersIds)
+          notificationMessage = await generateNotificationMessage(arrayOfChangedSelectors) +
+              `${slackMessagePrefix} were added as a reviewer to the PR: \n` +
+              `https://github.com/${owner}/${repo}/pull/${pull_number}`
+        } else {
+          notificationMessage = await generateNotificationMessage(arrayOfChangedSelectors) +
+              `Reviewers list is empty. No new reviewers will be added to the PR: \n` +
+              `https://github.com/${owner}/${repo}/pull/${pull_number}`
+        }
         await sendSlackMessage(notificationMessage);
       } else {
         core.info("Selectors format is not supported yet")
       }
     } else {
-      core.info("Automation selectors weren't changed");
+      core.info("No changes detected in configured attributes");
     }
   } catch (ex) {
     core.info("Failed to detect attributes changes: " + ex);

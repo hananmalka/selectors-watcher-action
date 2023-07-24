@@ -2,16 +2,70 @@
 
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fhananmalka1212%2Fhit-counter&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23961212&title=hits&edge_flat=false)](https://github.com/hananmalka)
 
+Keep your automation project **stable** by 
+detecting and notifying attributes code changes.
+
+---
+
+##Table Of Contents
+
+---
+
+* [General Info](#general-info)
+* [Features](#features)
+* [Parameters](#input-paraameters)
+* [Usage](#usage)
+
+---
+
+##General Info
 This is a GitHub action implementation of the [`selectors-watcher`](https://github.com/hananmalka/selectors-watcher) NPM package.
 
-By running this action you will be able to notify relevant stakeholders with any selectors change in order to avoid instability and lack of communication between developers and automation engineers.
+By adding this action to your workflow you will be able to notify relevant stakeholders with any attributes change in order to avoid instability and lack of communication between developers and automation engineers.
 
 ### Features
 * Detect code changes according to predefined selectors
 * Notify stakeholders using Slack, showing the old and the new versions of changed selectors
-* Add relevant stakeholders as a reviewers in case pull request exists
+* Add relevant stakeholders as a pull request reviewers
 
-## Code in Main
+### Input Parameters (`with`)
+`slack_channel` (required)  
+The slack channel **ID**
+```yaml
+with:
+  slack_channel: 
+```  
+`slack_token` (required)  
+The token that enables to send messages using API 
+```yaml
+with:
+  slack_token: ${{ secrets.SLACK_TOKEN }}
+```
+`reviewers` (optional)
+```yaml
+with:
+  reviewers: ["jane doe", "jhon nokes"]
+```
+
+`attributes` (optional - default is ["id"]) 
+```yaml
+with:
+  attributes: ["id", "test-id"]
+```
+`slack_users_emails` (Optional)
+```yaml
+with:
+  slack_users_emails: ["jhon.doe@gmail.com", "jhon.nokes@gmail.com"]
+```
+
+| Name    | Description                              | Required |
+|---------|:-----------------------------------------|:---------|
+| slack_channel | The slack channel ID to get notification | true     |
+| slack_token | centered                                 | true     |
+| reviewers | are neat                                 | false    |
+| attributes| are neat                                 | false    |
+| slack_users_emails | are neat                                 | false    |
+
 
 Install the dependencies
 
@@ -43,7 +97,7 @@ See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-
 
 Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
 
-```javascript
+```
 const core = require('@actions/core');
 ...
 
