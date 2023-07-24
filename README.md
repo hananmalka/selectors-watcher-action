@@ -12,7 +12,9 @@ Keep your automation project **stable** by detecting and notifying attributes co
 * [General Info](#general-info)
 * [Features](#features)
 * [Parameters](#input-parameters)
-* [Usage](#usage)## General Info
+* [Usage](#usage)
+---
+## General Info
 
 This is a **GitHub action** implementation of the [`selectors-watcher`](https://github.com/hananmalka/selectors-watcher) NPM package.
 
