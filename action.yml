@@ -1,7 +1,7 @@
 name: 'selectors-watcher-action'
 description: 'Detect git changes in provided attributes and send notifications to relevant stakeholders'
 inputs:
-  token: #
+  gh_token: #
     description: ""
     required: true
     default: ""

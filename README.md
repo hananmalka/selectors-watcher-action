@@ -14,6 +14,7 @@ Keep your automation project **stable** by detecting and notifying attributes co
 * [Parameters](#input-parameters)
 * [Usage](#usage)
 ---
+
 ## General Info
 
 This is a **GitHub action** implementation of the [`selectors-watcher`](https://github.com/hananmalka/selectors-watcher) NPM package.
@@ -28,16 +29,23 @@ By adding this action to your workflow you will be able to notify relevant stake
 
 
 
-| Name | Type     | Description |         Required        | Default|
-| :-------- | :------- |:------------ |:------------------------- |:-----------|
-| `token` | `string` |Github token to be able to make API actions | Yes | Empty |
-| `slack_channel` | `string` | The slack channel (ID) <br />you want to send notifications | Yes - If `reviewers` param provided,<br />otherwise - No | Empty |
-| `slack_token` | `string` | Slack bot token (Set as a repo secret) | Yes | Empty |
-|`attributes` | `Array (string)` | The attributes you want to detect changes in <br />e.g. `test-id`, `qa-id`, `automation-id`| Yes | `'["id"]'` |
-|`reviewers`| `Array (string)`| Array of revierwers to be added to the pull request| No| `'[]'`
-|`slack_users_emails` | `Array (string)` | The slack users email. <br />This is for case you want to mention the reviewers in the slack message. | No | `'[]'` |
+| Name                 | Type     | Description |         Required        | Default|
+|:---------------------| :------- |:------------ |:------------------------- |:-----------|
+| `gh_token`           | `string` |Github token to be able to make API actions | Yes | Empty |
+| `slack_channel`      | `string` | The slack channel (ID) <br />you want to send notifications | Yes - If `reviewers` param provided,<br />otherwise - No | Empty |
+| `slack_token`        | `string` | Slack bot token (Set as a repo secret) | Yes | Empty |
+| `attributes`         | `Array (string)` | The attributes you want to detect changes in <br />e.g. `test-id`, `qa-id`, `automation-id`| Yes | `'["id"]'` |
+| `reviewers`          | `Array (string)`| Array of revierwers to be added to the pull request| No| `'[]'`
+| `slack_users_emails` | `Array (string)` | The slack users email. <br />This is for case you want to mention the reviewers in the slack message. | No | `'[]'` |
 
 
+`slack_token:`
+You need to create slack app and get the bot token. Here is a [quickstart](https://api.slack.com/start/quickstart).  
+The app should have the following permissions:
+* `channels:read`
+* `chat:write`
+* `users:read`
+* `users:read.email`
 ## Usage
 
 In order to be able to detect code changes, you need to `checkout` the repo first.  
@@ -66,7 +74,7 @@ jobs:
           ref: ${ GITHUB_HEAD_REF }
       - uses: hananmalka/selectors-watcher-action@v1
         with:
-          token: ${{ secrets.GHP_TOKEN }}
+          gh_token: ${{ secrets.GHP_TOKEN }}
           slack_channel: "YOUR_SLACK_CHANNEL_ID"
           slack_token: ${{ secrets.SLACK_TOKEN }}
           reviewers: '["jane doe"]'

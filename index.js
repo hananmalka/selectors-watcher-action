@@ -18,7 +18,7 @@ const attributes = core.getInput('attributes');
 const slackToken = core.getInput("slack_token");
 const slackUsersEmail = core.getInput("slack_users_emails");
 
-const github_token = core.getInput("token");
+const github_token = core.getInput("gh_token");
 const octokit = new github.getOctokit(github_token);
 const app = new WebClient(slackToken);
 
@@ -88,7 +88,7 @@ const generateNotificationMessage = async(arrayOfChangedSelectors) => {
   return ":Warning: The following selectors has been changed:\n\n" +
       `${selectorsChangesFormatted}\n` +
       "*Branch*: " + baseBranch + "\n" +
-      "*Service*: " + repo + "\n";
+      "*Repo*: " + repo + "\n";
 }
 
 const addReviewersToPullRequest = async () => {
