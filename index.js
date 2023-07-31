@@ -11,7 +11,7 @@ const pullRequest = context.payload.pull_request;
 
 const pull_number = pullRequest.number;
 
-const branch_name = core.getInput('current_branch');
+const branch_name = core.getInput('branch_name');
 const slackChannel = core.getInput('slack_channel');
 const reviewers = core.getInput('reviewers');
 const attributes = core.getInput('attributes');
