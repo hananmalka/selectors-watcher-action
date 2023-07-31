@@ -87,9 +87,9 @@ const generateNotificationMessage = async(arrayOfChangedSelectors) => {
     selectorsChangesFormatted += idChangesFormat;
   }
   return ":Warning: The following selectors has been changed:\n\n" +
-      `${selectorsChangesFormatted}\n` +
-      "*Branch*: " + branch_name + "\n" +
-      "*Repo*: " + repo + "\n";
+      `${selectorsChangesFormatted}\n
+      *Branch*:  ${branch_name}\n
+      *Repo*: ${repo}\n`
 }
 
 const addReviewersToPullRequest = async () => {
