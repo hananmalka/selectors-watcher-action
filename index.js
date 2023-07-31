@@ -33,6 +33,7 @@ const executeShellCommand = async (command) => {
 
 const getAttributeChanges = async () => {
   core.info(`Get attribute changes: ${attributes}`);
+  core.info(`${branch_name}`);
   let greppedValue = ""
   const attributesArray = JSON.parse(attributes);
   if (!Array.isArray(attributesArray)) {
