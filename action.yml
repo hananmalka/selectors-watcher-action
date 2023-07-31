@@ -1,6 +1,10 @@
 name: 'selectors-watcher-action'
 description: 'Detect git changes in provided attributes and send notifications to relevant stakeholders'
 inputs:
+  branch_name: #
+    description: ""
+    required: false
+    default: ${{ github.head_ref }}
   gh_token: #
     description: ""
     required: false
