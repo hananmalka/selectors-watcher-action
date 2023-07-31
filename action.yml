@@ -4,7 +4,7 @@ inputs:
   gh_token: #
     description: ""
     required: true
-    default: ""
+    default: ${{ github.token }}
   slack_channel:  # slack channel ID
     description: 'Slack channel ID to get messages'
     required: true
