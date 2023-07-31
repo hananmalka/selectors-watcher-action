@@ -3,7 +3,7 @@ description: 'Detect git changes in provided attributes and send notifications t
 inputs:
   gh_token: #
     description: ""
-    required: true
+    required: false
     default: ${{ github.token }}
   slack_channel:  # slack channel ID
     description: 'Slack channel ID to get messages'
