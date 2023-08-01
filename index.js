@@ -33,6 +33,7 @@ const executeShellCommand = async (command) => {
 
 const getAttributeChanges = async () => {
   core.info(`Get attribute changes: ${attributes}`);
+  core.info(`Get attribute changes: ${branch_name}`);
   let greppedValue = ""
   const attributesArray = JSON.parse(attributes);
   if (!Array.isArray(attributesArray)) {
@@ -77,7 +78,7 @@ const getOldNewAChangesArray = (gitChanges) => {
 
 const generateNotificationMessage = async(arrayOfChangedSelectors) => {
   let selectorsChangesFormatted = "";
-  core.info(`Branch: ${branch_name}`)
+  core.info(`Branch`)
   const separator = '\n-----------------------------------------------------------------------------\n'
   for (let i = 0; i < arrayOfChangedSelectors.length; i += 1) {
     const idChangesFormat = "*Origin:* " + arrayOfChangedSelectors[i].old + "\n" +
