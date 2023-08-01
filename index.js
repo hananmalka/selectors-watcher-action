@@ -77,6 +77,7 @@ const getOldNewAChangesArray = (gitChanges) => {
 
 const generateNotificationMessage = async(arrayOfChangedSelectors) => {
   let selectorsChangesFormatted = "";
+  core.info(`Branch: ${branch_name}`)
   const separator = '\n-----------------------------------------------------------------------------\n'
   for (let i = 0; i < arrayOfChangedSelectors.length; i += 1) {
     const idChangesFormat = "*Origin:* " + arrayOfChangedSelectors[i].old + "\n" +
