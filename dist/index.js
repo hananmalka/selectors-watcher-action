@@ -22704,8 +22704,8 @@ const context = github.context;
 const pullRequest = context.payload.pull_request;
 
 const pull_number = pullRequest.number;
-const baseBranch = pullRequest.base.ref;
 
+const branch_name = core.getInput('current_branch');
 const slackChannel = core.getInput('slack_channel');
 const reviewers = core.getInput('reviewers');
 const attributes = core.getInput('attributes');
@@ -22727,6 +22727,7 @@ const executeShellCommand = async (command) => {
 
 const getAttributeChanges = async () => {
   core.info(`Get attribute changes: ${attributes}`);
+  core.info(`Get attribute changes: ${branch_name}`);
   let greppedValue = ""
   const attributesArray = JSON.parse(attributes);
   if (!Array.isArray(attributesArray)) {
@@ -22771,6 +22772,7 @@ const getOldNewAChangesArray = (gitChanges) => {
 
 const generateNotificationMessage = async(arrayOfChangedSelectors) => {
   let selectorsChangesFormatted = "";
+  core.info(`Branch`)
   const separator = '\n-----------------------------------------------------------------------------\n'
   for (let i = 0; i < arrayOfChangedSelectors.length; i += 1) {
     const idChangesFormat = "*Origin:* " + arrayOfChangedSelectors[i].old + "\n" +
@@ -22780,9 +22782,9 @@ const generateNotificationMessage = async(arrayOfChangedSelectors) => {
     selectorsChangesFormatted += idChangesFormat;
   }
   return ":Warning: The following selectors has been changed:\n\n" +
-      `${selectorsChangesFormatted}\n` +
-      "*Branch*: " + baseBranch + "\n" +
-      "*Repo*: " + repo + "\n";
+      `${selectorsChangesFormatted}\n
+      *Branch*:  ${branch_name}\n
+      *Repo*: ${repo}\n`
 }
 
 const addReviewersToPullRequest = async () => {
